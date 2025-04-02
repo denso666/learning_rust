@@ -1,6 +1,11 @@
-/*
- * PRINCIPAL FUNCTION
- */
+use std::io::Write;
+
+// CONSTANTS
+const DEBUG: bool = false;
+const ERROR: i32 = -1;
+const EXIT: i32 = 0;
+
+// MAIN
 fn main() {
     'main_loop: loop {
         let result: i32 = match menu() {
@@ -8,27 +13,33 @@ fn main() {
             2 => sub(get_inputs()),
             3 => mul(get_inputs()),
             4 => div(get_inputs()),
-            0 => {
+            EXIT => {
                 println!("Thanks, see you soon :)");
                 break 'main_loop;
             }
             _ => {
-                println!("ERROR: An unexpected error ocurres :(");
-                0
+                if DEBUG {
+                    println!("ERROR: An unexpected error ocurres :(");
+                }
+                ERROR
             }
         };
 
-        println!("Result: {}", result);
+        if result != ERROR {
+            println!("= {}", result);
+        }
     }
 }
 
 fn menu() -> i32 {
-    println!("\tCalculator");
-    println!("1. Sum");
-    println!("2. Sub");
-    println!("3. Div");
-    println!("4. Mul");
-    println!("0. Exit");
+    println!("\n🧮   Calculator   🧮");
+    println!("❶ Plus");
+    println!("❷ Minus");
+    println!("❸ Multiplication");
+    println!("❹ Division");
+    println!("𝟘 Exit");
+    print!("↩︎ ");
+    std::io::stdout().flush().unwrap();
 
     let mut line: String = String::new();
     std::io::stdin()
@@ -39,7 +50,7 @@ fn menu() -> i32 {
         Ok(n) => n,
         Err(e) => {
             println!("ERROR: {}", e);
-            -1
+            ERROR
         }
     };
 
@@ -49,7 +60,8 @@ fn menu() -> i32 {
 fn get_inputs() -> [i32; 2] {
     let mut buff0: String = String::new();
 
-    println!("A:");
+    print!("A? ");
+    std::io::stdout().flush().unwrap();
     std::io::stdin()
         .read_line(&mut buff0)
         .expect("ERROR: an unexpected value was provided");
@@ -58,12 +70,13 @@ fn get_inputs() -> [i32; 2] {
         Ok(n) => n,
         Err(e) => {
             println!("ERROR: {}", e);
-            0
+            return [0, 0];
         }
     };
 
     let mut buff1: String = String::new();
-    println!("B:");
+    print!("B? ");
+    std::io::stdout().flush().unwrap();
     std::io::stdin()
         .read_line(&mut buff1)
         .expect("ERROR: an unexpected value was provided");
@@ -72,23 +85,23 @@ fn get_inputs() -> [i32; 2] {
         Ok(n) => n,
         Err(e) => {
             println!("ERROR: {}", e);
-            0
+            return [0, 0];
         }
     };
 
     [a, b]
 }
 
+// OPERATIONS
 fn sum(arr: [i32; 2]) -> i32 {
     arr[0] + arr[1]
 }
-
 fn sub(arr: [i32; 2]) -> i32 {
-    arr[0] + arr[1]
+    arr[0] - arr[1]
 }
 fn mul(arr: [i32; 2]) -> i32 {
-    arr[0] + arr[1]
+    arr[0] * arr[1]
 }
 fn div(arr: [i32; 2]) -> i32 {
-    arr[0] / arr[1] as i32
+    arr[0] / arr[1]
 }
